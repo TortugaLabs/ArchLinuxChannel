@@ -1,0 +1,14 @@
+pkgbase = undup
+	pkgdesc = Track duplicate files and merge them
+	pkgver = 2.1.0
+	pkgrel = 1
+	url = https://github.com/TortugaLabs/undup
+	arch = i686
+	arch = x86_64
+	license = GPL2
+	depends = gdbm
+	source = https://github.com/TortugaLabs/undup/releases/download/2.1.0/undup-2.1.0.tar.gz
+	md5sums = cf5e3b6b37f2fa13e86f7f8482045196
+
+pkgname = undup
+

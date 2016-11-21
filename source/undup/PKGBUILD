@@ -1,0 +1,36 @@
+# Maintainer: alejandroliu <alejandro_liu AT hotmail DOT com>
+# NO_COWER
+
+# Download sources
+#		makepkg -o --noextract
+# Update checksums
+#     updpkgsums
+# generate .SRCINFO
+#     makepkg --printsrcinfo > .SRCINFO
+
+
+pkgname='undup'
+pkgver=2.1.0
+pkgrel=1
+pkgdesc='Track duplicate files and merge them'
+arch=('i686' 'x86_64')
+url='https://github.com/TortugaLabs/undup'
+license=('GPL2')
+depends=(gdbm)
+conflicts=()
+replaces=()
+source=("https://github.com/TortugaLabs/$pkgname/releases/download/$pkgver/$pkgname-$pkgver.tar.gz")
+md5sums=('cf5e3b6b37f2fa13e86f7f8482045196')
+
+build() {
+  cd "$pkgname-$pkgver"
+  make GDBM_UNPACK=: GDBM_DEP= GDBM_REF=-lgdbm prod
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  install -s -Dm755 undup "$pkgdir/usr/bin/undup"
+  install -Dm644 undup.1 "$pkgdir/usr/share/man/man1/undup.1"
+  gzip  "$pkgdir/usr/share/man/man1/undup.1"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

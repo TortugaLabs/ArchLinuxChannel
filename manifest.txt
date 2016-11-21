@@ -1,0 +1,20 @@
+#
+# AUR manifest
+#
+clean-chroot-manager
+dropbox
+google-chrome
+thunar-dropbox
+yum
+rpm-org
+mock
+deltarpm
+createrepo
+# yum dependancies...
+yum-metadata-parser
+python2-pyliblzma
+# mock deps
+distribution-gpg-keys
+drpm
+createrepo_c
+yum-utils
