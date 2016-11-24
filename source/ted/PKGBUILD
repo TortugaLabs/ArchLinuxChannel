@@ -1,0 +1,31 @@
+# Maintainer: alejandroliu <alejandro_liu AT hotmail DOT com>
+# NO_COWER
+
+# Download sources
+#		makepkg -o --noextract
+# Update checksums
+#     updpkgsums
+# generate .SRCINFO
+#     makepkg --printsrcinfo > .SRCINFO
+
+
+pkgname='ted'
+pkgver=2002.1
+pkgrel=1
+pkgdesc='sanos text editor'
+arch=('i686' 'x86_64')
+url='http://www.jbox.dk/sanos/editor.htm'
+license=('MIT')
+depends=()
+conflicts=()
+replaces=()
+source=("http://www.jbox.dk/downloads/edit.c")
+md5sums=('ee928c738af288d1a6aaf3cba018ed42')
+
+build() {
+  gcc $CFLAGS -o ted edit.c
+}
+
+package() {
+  install -s -Dm755 ted "$pkgdir/usr/bin/ted"
+}

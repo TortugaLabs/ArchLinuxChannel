@@ -115,6 +115,13 @@ ccm_nuke=no
 ccm_preheat=()
 cnt=0
 
+for p in "$@"
+do
+  [ ! -f "$p"/PKGBUILD ] && continue
+  [ -f "$p"/.SRCINFO ] && continue
+  ( cd "$p" && makepkg --printsrcinfo > .SRCINFO )
+done
+
 queue=$(aurqueue "$@")
 $debug "IN:     " $*
 $debug "ORDERED:" $queue
@@ -129,20 +136,20 @@ do
     if [ $ccm_ready = no ] ;then
       if $ccm c ; then
         ccm_nuke=yes
-				# Pre-load repo with ...
-				local_repo="$(. $CCMCFG && eval echo '$'CHROOTPATH$ccmsz)/root/repo"
-				$debug "local_repo=$local_repo"
-				[ ! -d "$local_repo" ] && $root mkdir -p "$local_repo"
-				for inpkg in "${ccm_preheat[@]}"
-				do
-					$root cp -a "$inpkg" "$local_repo"
-				done
-				( cd "$local_repo" && $root repo-add "$chroot_repo.db.tar.gz" *.pkg.tar.* )
-				# add a local repo to chroot
-				[ -f $(dirname "$local_repo")/etc/pacman.conf ] && $debug "Editing pacman.conf"
-				$root sed -i '/\[testing\]/i \
-					# Added by clean-chroot-manager\n[chroot_local]\nSigLevel = Never\nServer = file:///repo\n' \
-					$(dirname "$local_repo")/etc/pacman.conf
+	# Pre-load repo with ...
+	local_repo="$(. $CCMCFG && eval echo '$'CHROOTPATH$ccmsz)/root/repo"
+	$debug "local_repo=$local_repo"
+	[ ! -d "$local_repo" ] && $root mkdir -p "$local_repo"
+	for inpkg in "${ccm_preheat[@]}"
+	do
+		$root cp -a "$inpkg" "$local_repo"
+	done
+	( cd "$local_repo" && $root repo-add "$chroot_repo.db.tar.gz" *.pkg.tar.* )
+	# add a local repo to chroot
+	[ -f $(dirname "$local_repo")/etc/pacman.conf ] && $debug "Editing pacman.conf"
+	$root sed -i '/\[testing\]/i \
+		# Added by clean-chroot-manager\n[chroot_local]\nSigLevel = Never\nServer = file:///repo\n' \
+		$(dirname "$local_repo")/etc/pacman.conf
       fi
       ccm_ready=yes
     fi

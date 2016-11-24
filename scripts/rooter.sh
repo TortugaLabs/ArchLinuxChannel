@@ -32,5 +32,7 @@ else
   rootkeepr=$!
 fi
 
+export IN_ROOTER=$$
+
 "$@"
 
