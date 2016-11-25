@@ -105,9 +105,48 @@ aurqueue() {
   dmsort "$tmp"/deps | basesub "$tmp"/base | grep -Fxf <(printf '%s\n' "$@") | tac
 }
 
+ccm_add_pkg() {
+  [ $# -eq 0 ] && return
+  count=0
+
+  if [ -z "$local_repo" ] ; then
+    local_repo="$(. $CCMCFG && eval echo '$'CHROOTPATH$ccmsz)/root/repo"
+    $debug "local_repo=$local_repo"
+  fi
+  [ ! -d "$local_repo" ] && $root mkdir -p "$local_repo"
+  
+  # Add given packages to local repo
+  local inpkg= pkglst=()
+  for inpkg in "$@"
+  do
+    [ ! -f "$inpkg" ] && continue
+    local i="$(basename "$inpkg")"
+    
+    [ -f "$local_repo/$i" ] && continue
+
+    $root cp -a "$inpkg" "$local_repo/$i"
+    pkglst+=( "$i" )
+    cnt=$(expr $cnt + 1)
+  done
+  [  $cnt -eq 0 ] && return
+  
+  ( cd "$local_repo" && $root repo-add "chroot_local.db.tar.gz" "${pkglst[@]}" )
+
+  # add a local repo to chroot
+  local pacman_conf="$(dirname "$local_repo")/etc/pacman.conf"
+  [ ! -f "$pacman_conf" ] && return  
+  grep -q "clean-chroot-manager" "$pacman_conf" && return
+  
+  $debug "Editing $pacman_conf"
+  $root sed -i '/\[testing\]/i \
+      # Added by clean-chroot-manager\n[chroot_local]\nSigLevel = Never\nServer = file:///repo\n' \
+      "$pacman_conf"
+}
+local_repo=""
+
+
 CCMCFG=${CFGFILE:-$HOME/.config/clean-chroot-manager.conf}
 $debug CCMCFG=$CCMCFG
-chroot_repo="chroot_local"
 
 ccm="$root ccm$ccmsz"
 ccm_ready=no
@@ -137,19 +176,7 @@ do
       if $ccm c ; then
         ccm_nuke=yes
 	# Pre-load repo with ...
-	local_repo="$(. $CCMCFG && eval echo '$'CHROOTPATH$ccmsz)/root/repo"
-	$debug "local_repo=$local_repo"
-	[ ! -d "$local_repo" ] && $root mkdir -p "$local_repo"
-	for inpkg in "${ccm_preheat[@]}"
-	do
-		$root cp -a "$inpkg" "$local_repo"
-	done
-	( cd "$local_repo" && $root repo-add "$chroot_repo.db.tar.gz" *.pkg.tar.* )
-	# add a local repo to chroot
-	[ -f $(dirname "$local_repo")/etc/pacman.conf ] && $debug "Editing pacman.conf"
-	$root sed -i '/\[testing\]/i \
-		# Added by clean-chroot-manager\n[chroot_local]\nSigLevel = Never\nServer = file:///repo\n' \
-		$(dirname "$local_repo")/etc/pacman.conf
+	ccm_add_pkg "${ccm_preheat[@]}"
       fi
       ccm_ready=yes
     fi
@@ -157,10 +184,8 @@ do
   else
     if [ $ccm_ready = no ] ; then
       ccm_preheat+=( $(echo "$pkg"/*.pkg.tar.*) )
-    elif [ -n "$local_repo" ] ; then
-      pkgs=$(cd "$pkg" ; echo *.pkg.tar.* )
-      ( cd "$pkg" && $root cp -a $pkgs "$local_repo" )
-      ( cd "$local_repo" && $root repo-add "$chroot_repo.db.tar.gz" $pkgs )
+    else
+      ccm_add_pkg "$pkg/"*.pkg.tar.*
     fi
   fi
 done
