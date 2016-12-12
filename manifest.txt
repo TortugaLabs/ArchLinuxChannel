@@ -16,5 +16,5 @@ python2-pyliblzma
 # mock deps
 distribution-gpg-keys
 drpm
-createrepo_c
+#createrepo_c
 yum-utils
