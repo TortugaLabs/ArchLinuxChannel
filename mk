@@ -56,18 +56,22 @@ if [ "$#" -eq 0 ] ; then
 fi
 
 init() {
+  $debug "! initializing sources"
   $scripts/seed.sh manifest.txt source
 }
 
 update() {
-  ( cd source && $scripts/aurdl.sh * )
+  $debug "! update from AUR"
+  ( cd source && $scripts/aurdl.sh --ignorerepo="$name" * )
 }
 
 build() {
-   ( cd source && $scripts/builder.sh * )
+  $debug "! Building sources"
+  ( cd source && $scripts/builder.sh * )
 }
 
 push() {
+  $debug "! Push to repo"
   if [ -z "$repo" ] ; then
     echo "Specify repo with --repo= option"
     exit 1

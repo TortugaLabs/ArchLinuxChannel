@@ -10,6 +10,20 @@ cleanup() {
   [ -d "$work" ] && rm -rf "$work"
 }
 
+x_opts=()
+
+while [ $# -gt 0 ] ; do
+  case "$1" in
+    --ignorerepo=*)
+      x_opts+=( "$1" )
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
+done
+
 
 for pkg in "$@"
 do
@@ -30,9 +44,8 @@ do
   $debug $pkgname $pkgver - $aurver
   [ "$aurver" = "$pkgver" ] && continue
   
-  
   work="$(mktemp -d -p "$(dirname "$pkg")")"
-  ( cd "$work" && cower -d "$pkgname" )
+  ( cd "$work" && cower "${x_opts[@]}" -d "$pkgname" )
   if [ -f "$work/$pkgname/PKGBUILD" ] ; then
     rm -rf "$pkg"
     mv "$work/$pkgname" "$pkg"
