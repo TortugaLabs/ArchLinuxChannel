@@ -1,12 +1,62 @@
-#!/bin/sh
+#++
+# = AURDL(8)
+# :Revision: 1.1
+# :Author: A Liu Ly
 #
-# Check AUR and download sources that need to be updated...
+# == NAME
 #
+# aurdl - Check AUR and download sources that need to be updated...
+#
+# == SYNOPSIS
+#
+# *aurdl* [--ignore-repo=name] srcdir [srcdir ...]
+#
+# == DESCRIPTION
+#
+# Examine the source directories and updates any that need updating.
+#  
+#--
+
+#### start common stuff ####
+version=$( grep '^# :Revision:' "$0" | cut -d: -f3 | tr -d ' ')
+set -euf -o pipefail
+die() {
+  ## Show a message and exit
+  ## # USAGE
+  ##   die exit_code [msg]
+  ## # ARGS
+  ## * exit_code -- Exit code
+  ## * msg -- Text to show on stderr
+  local exit_code="$1"
+  shift
+  echo "$@" 2>&1
+  exit $exit_code
+}
+debug() {
+  ## Will show a message if debug is non-empty
+  [ -z "${debug:=y}" ] && return
+  echo "$@"
+}
+manual() {
+  ## Show embedded (manify) documentation
+  sed -n -e '/^#++$/,$p' "$0" -e '/^#--$/q' "$1" | grep '^#' | sed -e 's/^# //' -e 's/^#//'
+  exit 0
+}
+usage() {
+  ## Show usage
+  echo 'Usage:'
+  sed -n -e '/^#++$/,$p' "$0" -e '/^#--$/q' "$1" | grep '^#' | \
+    sed -n -e '/^# == SYNOPSIS/,$p'  | ( read x ; cat ) | \
+    sed -e '/^# == /q' | sed 's/^# == .*//' | sed -e 's/^# *//' | \
+    (while read l ; do [ -n "$l" ] && echo '    '"$l" ; done) && :
+  [ -n "$version" ] && echo "$(basename "$0") v$version"
+  exit
+}
+#### stop common stuff ####
 cnt=0
-[ -z "$debug" ] && debug=:
 
 cleanup() {
-  [ -z "$work" ] && return
+  [ -z "${work:-}" ] && return
   [ -d "$work" ] && rm -rf "$work"
 }
 
@@ -24,13 +74,14 @@ while [ $# -gt 0 ] ; do
   shift
 done
 
+[ $# -eq 0 ] && usage "$0"
 
 for pkg in "$@"
 do
   [ -f "$pkg"/PKGBUILD ] || continue
   grep -q NO_COWER "$pkg"/PKGBUILD && continue
   
-  pkgname="$(. "$pkg"/PKGBUILD ; echo $pkgname)"
+  pkgname="$(set +euf ; . "$pkg"/PKGBUILD ; echo $pkgname)"
   if [ -z "$pkgname" ] ; then
     echo "$pkg: PKGBUILD missing pkgname"
     continue
@@ -41,7 +92,7 @@ do
     echo "$pkgname not found by cower"
     continue
   fi
-  $debug $pkgname $pkgver - $aurver
+  debug $pkgname $pkgver - $aurver
   [ "$aurver" = "$pkgver" ] && continue
   
   work="$(mktemp -d -p "$(dirname "$pkg")")"

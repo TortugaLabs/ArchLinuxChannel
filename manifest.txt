@@ -1,20 +1,27 @@
 #
 # AUR manifest
 #
-clean-chroot-manager
 dropbox
 google-chrome
 thunar-dropbox
-yum
-rpm-org
-mock
-deltarpm
-createrepo
-# yum dependancies...
-yum-metadata-parser
-python2-pyliblzma
-# mock deps
-distribution-gpg-keys
-drpm
-#createrepo_c
-yum-utils
+
+#
+# These were planned for Centos chroots
+# (deferred)
+#
+#yum
+#rpm-org
+#mock
+#deltarpm
+#createrepo
+## yum dependancies...
+#yum-metadata-parser
+#python2-pyliblzma
+## mock deps
+#distribution-gpg-keys
+#drpm
+##createrepo_c
+#yum-utils
+
+# Removed ... no longer needed...
+#clean-chroot-manager

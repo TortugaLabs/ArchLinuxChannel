@@ -1,0 +1,32 @@
+diff -urN ../nuevo/lmc/src/lmc.pro ./lmc/src/lmc.pro
+--- ../nuevo/lmc/src/lmc.pro	2012-07-19 20:01:54.000000000 -0300
++++ ./lmc/src/lmc.pro	2016-08-24 10:18:53.200391831 -0300
+@@ -153,3 +153,5 @@
+ DEPENDPATH += $$PWD/../../openssl/include
+ 
+ win32:LIBS += -liphlpapi
++
++RESOURCE = resource.qrc
+diff -urN ../nuevo/lmc/src/resource.qrc ./lmc/src/resource.qrc
+--- ../nuevo/lmc/src/resource.qrc	2012-07-24 23:44:08.000000000 -0300
++++ ./lmc/src/resource.qrc	2016-08-24 10:18:22.443724643 -0300
+@@ -1,13 +1,13 @@
+ <RCC>
+     <qresource prefix="/icons">
+-        <file alias="application">resources/icons/lmc.ico</file>
++        <file alias="application">resources/icons/lmc-0.png</file>
+     </qresource>
+     <qresource prefix="/icons/bubbles">
+-        <file alias="away">resources/icons/awaybubble.ico</file>
+-        <file alias="busy">resources/icons/busybubble.ico</file>
+-        <file alias="nodisturb">resources/icons/nodisturbbubble.ico</file>
+-        <file alias="offline">resources/icons/offlinebubble.ico</file>
+-        <file alias="online">resources/icons/onlinebubble.ico</file>
++        <file alias="away">resources/icons/awaybubble-0.png</file>
++        <file alias="busy">resources/icons/busybubble-0.png</file>
++        <file alias="nodisturb">resources/icons/nodisturbbubble-0.png</file>
++        <file alias="offline">resources/icons/offlinebubble-0.png</file>
++        <file alias="online">resources/icons/onlinebubble-0.png</file>
+     </qresource>
+     <qresource prefix="/images">
+         <file alias="close">resources/images/close.png</file>

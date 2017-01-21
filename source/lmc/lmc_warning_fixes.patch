@@ -1,0 +1,271 @@
+diff -urN ../orig/lmc/src/broadcastwindow.cpp ./lmc/src/broadcastwindow.cpp
+--- ../orig/lmc/src/broadcastwindow.cpp	2012-07-24 22:29:12.000000000 -0300
++++ ./lmc/src/broadcastwindow.cpp	2016-08-24 09:26:13.867004853 -0300
+@@ -67,7 +67,7 @@
+ 	createToolBar();
+ 
+ 	setWindowIcon(QIcon(IDR_APPICON));
+-	ui.splitter->setStyleSheet("QSplitter::handle { image: url("IDR_HGRIP"); }");
++	ui.splitter->setStyleSheet("QSplitter::handle { image: url(" IDR_HGRIP "); }");
+ 
+ 	ui.tvUserList->setIconSize(QSize(16, 16));
+ 	ui.tvUserList->header()->setMovable(false);
+diff -urN ../orig/lmc/src/chatroomwindow.cpp ./lmc/src/chatroomwindow.cpp
+--- ../orig/lmc/src/chatroomwindow.cpp	2012-07-24 23:01:38.000000000 -0300
++++ ./lmc/src/chatroomwindow.cpp	2016-08-24 09:20:13.896998739 -0300
+@@ -47,12 +47,12 @@
+ 	sizes.append(height() - bottomPanelHeight - ui.hSplitter->handleWidth());
+ 	sizes.append(bottomPanelHeight);
+ 	ui.hSplitter->setSizes(sizes);
+-	ui.hSplitter->setStyleSheet("QSplitter::handle { image: url("IDR_VGRIP"); }");
++	ui.hSplitter->setStyleSheet("QSplitter::handle { image: url(" IDR_VGRIP "); }");
+ 	sizes.clear();
+ 	sizes.append(width() * 0.7);
+ 	sizes.append(width() - width() * 0.7 - ui.vSplitter->handleWidth());
+ 	ui.vSplitter->setSizes(sizes);
+-	ui.vSplitter->setStyleSheet("QSplitter::handle { image: url("IDR_HGRIP"); }");
++	ui.vSplitter->setStyleSheet("QSplitter::handle { image: url(" IDR_HGRIP "); }");
+ 
+ 	ui.lblInfo->setBackgroundRole(QPalette::Base);
+ 	ui.lblInfo->setAutoFillBackground(true);
+diff -urN ../orig/lmc/src/chatwindow.cpp ./lmc/src/chatwindow.cpp
+--- ../orig/lmc/src/chatwindow.cpp	2012-07-25 00:27:38.000000000 -0300
++++ ./lmc/src/chatwindow.cpp	2016-08-24 09:17:48.063662930 -0300
+@@ -46,7 +46,7 @@
+ 	sizes.append(height() - bottomPanelHeight - ui.splitter->handleWidth());
+ 	sizes.append(bottomPanelHeight);
+ 	ui.splitter->setSizes(sizes);
+-	ui.splitter->setStyleSheet("QSplitter::handle { image: url("IDR_VGRIP"); }");
++	ui.splitter->setStyleSheet("QSplitter::handle { image: url(" IDR_VGRIP "); }");
+ 
+ 	ui.lblInfo->setBackgroundRole(QPalette::Base);
+ 	ui.lblInfo->setAutoFillBackground(true);
+diff -urN ../orig/lmc/src/filemodelview.cpp ./lmc/src/filemodelview.cpp
+--- ../orig/lmc/src/filemodelview.cpp	2012-03-25 14:58:58.000000000 -0300
++++ ./lmc/src/filemodelview.cpp	2016-08-24 09:17:23.146995839 -0300
+@@ -313,8 +313,9 @@
+ }
+ 
+ void FileModel::itemChanged(int position) {
+-    if(position < 0 || position >= transferList.count())
+-        return;
++    	if(position < 0 || position >= transferList.count()) {
++        	return;
++    	}
+ 
+ 	QModelIndex index = this->index(position);
+ 	emit dataChanged(index, index);
+diff -urN ../orig/lmc/src/history.cpp ./lmc/src/history.cpp
+--- ../orig/lmc/src/history.cpp	2012-07-24 19:15:00.000000000 -0300
++++ ./lmc/src/history.cpp	2016-08-24 09:16:18.536994743 -0300
+@@ -31,7 +31,7 @@
+ 	lmcSettings settings;
+ 	bool sysPath = settings.value(IDS_SYSHISTORYPATH, IDS_SYSHISTORYPATH_VAL).toBool();
+ 	QString path = QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-		QDesktopServices::DataLocation) + "/"HC_FILENAME);
++		QDesktopServices::DataLocation) + "/" HC_FILENAME);
+ 	if(!sysPath)
+ 		path = settings.value(IDS_HISTORYPATH, path).toString();
+ 	return path;
+diff -urN ../orig/lmc/src/historywindow.cpp ./lmc/src/historywindow.cpp
+--- ../orig/lmc/src/historywindow.cpp	2012-07-24 22:45:48.000000000 -0300
++++ ./lmc/src/historywindow.cpp	2016-08-24 09:16:00.090327763 -0300
+@@ -57,7 +57,7 @@
+ 
+ void lmcHistoryWindow::init(void) {
+ 	setWindowIcon(QIcon(IDR_APPICON));
+-	ui.splitter->setStyleSheet("QSplitter::handle { image: url("IDR_HGRIP"); }");
++	ui.splitter->setStyleSheet("QSplitter::handle { image: url(" IDR_HGRIP "); }");
+ 
+ 	pMessageLog->setAutoScroll(false);
+ 
+diff -urN ../orig/lmc/src/messagelog.cpp ./lmc/src/messagelog.cpp
+--- ../orig/lmc/src/messagelog.cpp	2012-07-24 20:05:00.000000000 -0300
++++ ./lmc/src/messagelog.cpp	2016-08-24 09:19:46.223664935 -0300
+@@ -140,7 +140,7 @@
+ 		caption = getChatStateMessage((ChatState)Helper::indexOf(ChatStateNames, CS_Max, message));
+ 		if(!caption.isNull()) {
+ 			html = themeData.stateMsg;
+-			html.replace("%iconpath%", "qrc"IDR_BLANK);
++			html.replace("%iconpath%", "qrc" IDR_BLANK);
+ 			html.replace("%sender%", caption.arg(*lpszUserName));
+ 			html.replace("%message%", "");
+ 			appendMessageLog(&html);
+@@ -155,7 +155,7 @@
+ 		caption = tr("This message was not delivered to %1:");
+ 		fontStyle = getFontStyle(&font, &color, true);
+ 		decodeMessage(&message);
+-		html.replace("%iconpath%", "qrc"IDR_CRITICALMSG);
++		html.replace("%iconpath%", "qrc" IDR_CRITICALMSG);
+ 		html.replace("%sender%", caption.arg(*lpszUserName));
+ 		html.replace("%style%", fontStyle);
+ 		html.replace("%message%", message);
+@@ -164,7 +164,7 @@
+ 		break;
+ 	case MT_Error:
+ 		html = themeData.sysMsg;
+-		html.replace("%iconpath%", "qrc"IDR_CRITICALMSG);
++		html.replace("%iconpath%", "qrc" IDR_CRITICALMSG);
+ 		html.replace("%sender%", tr("Your message was not sent."));
+ 		html.replace("%message%", "");
+ 		appendMessageLog(&html);
+@@ -184,7 +184,7 @@
+ 		caption = getChatRoomMessage((GroupMsgOp)Helper::indexOf(GroupMsgOpNames, GMO_Max, message));
+ 		if(!caption.isNull()) {
+ 			html = themeData.sysMsg;
+-			html.replace("%iconpath%", "qrc"IDR_BLANK);
++			html.replace("%iconpath%", "qrc" IDR_BLANK);
+ 			html.replace("%sender%", caption.arg(*lpszUserName));
+ 			html.replace("%message%", "");
+ 			appendMessageLog(&html);
+@@ -470,7 +470,7 @@
+ 
+ 	QString html = themeData.pubMsg;
+ 	QString caption = tr("Broadcast message from %1:");
+-	html.replace("%iconpath%", "qrc"IDR_BROADCASTMSG);
++	html.replace("%iconpath%", "qrc" IDR_BROADCASTMSG);
+ 	html.replace("%sender%", caption.arg(*lpszUserName));
+ 	html.replace("%time%", getTimeString(pTime));
+ 	html.replace("%style%", "");
+@@ -494,7 +494,7 @@
+ 		//	get the avatar image for this user from the cache folder
+ 		QString filePath = participantAvatars.value(*lpszUserId);
+ 		//	if image not found, use the default avatar image for this user
+-		QString iconPath = QFile::exists(filePath) ? QUrl::fromLocalFile(filePath).toString() : "qrc"AVT_DEFAULT;
++		QString iconPath = QFile::exists(filePath) ? QUrl::fromLocalFile(filePath).toString() : "qrc" AVT_DEFAULT;
+ 
+ 		html.replace("%iconpath%", iconPath);
+ 		html.replace("%sender%", *lpszUserName);
+@@ -539,7 +539,7 @@
+ 		//	get the avatar image for this user from the cache folder
+ 		QString filePath = participantAvatars.value(*lpszUserId);
+ 		//	if image not found, use the default avatar image for this user
+-		QString iconPath = QFile::exists(filePath) ? QUrl::fromLocalFile(filePath).toString() : "qrc"AVT_DEFAULT;
++		QString iconPath = QFile::exists(filePath) ? QUrl::fromLocalFile(filePath).toString() : "qrc" AVT_DEFAULT;
+ 
+ 		html.replace("%iconpath%", iconPath);
+ 		html.replace("%sender%", *lpszUserName);
+@@ -592,7 +592,7 @@
+     }
+ 
+ 	htmlMsg = themeData.reqMsg;
+-	htmlMsg.replace("%iconpath%", "qrc"IDR_FILEMSG);
++	htmlMsg.replace("%iconpath%", "qrc" IDR_FILEMSG);
+ 
+ 	FileOp fileOp = (FileOp)Helper::indexOf(FileOpNames, FO_Max, pMessage->data(XN_FILEOP));
+     FileMode fileMode = (FileMode)Helper::indexOf(FileModeNames, FM_Max, pMessage->data(XN_MODE));
+diff -urN ../orig/lmc/src/messagingproc.cpp ./lmc/src/messagingproc.cpp
+--- ../orig/lmc/src/messagingproc.cpp	2012-07-24 02:17:26.000000000 -0300
++++ ./lmc/src/messagingproc.cpp	2016-08-24 09:15:28.793660565 -0300
+@@ -90,7 +90,7 @@
+ 
+ 	switch(type) {
+ 	case MT_Version:
+-		szUrl = QString(IDA_DOMAIN"/webservice.php?q=version&p="IDA_PLATFORM);
++		szUrl = QString(IDA_DOMAIN "/webservice.php?q=version&p=" IDA_PLATFORM);
+ 		pNetwork->sendWebMessage(&szUrl, NULL);
+ 		break;
+ 	default:
+diff -urN ../orig/lmc/src/stdlocation.h ./lmc/src/stdlocation.h
+--- ../orig/lmc/src/stdlocation.h	2012-04-20 20:20:44.000000000 -0300
++++ ./lmc/src/stdlocation.h	2016-08-24 09:03:08.080314653 -0300
+@@ -46,21 +46,21 @@
+ public:
+ 	static QString transferHistory(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DataLocation) + "/"SL_TRANSFERHISTORY);
++			QDesktopServices::DataLocation) + "/" SL_TRANSFERHISTORY);
+ 	}
+ 
+ 	static QString fileStorageDir(void) {
+ 		lmcSettings settings;
+ 
+ 		QString path = QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DocumentsLocation) + "/"SL_FILESTORAGEDIR);
++			QDesktopServices::DocumentsLocation) + "/" SL_FILESTORAGEDIR);
+ 		path = settings.value(IDS_FILESTORAGEPATH, path).toString();
+ 		return path;
+ 	}
+ 
+ 	static QString cacheDir(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DataLocation) + "/"SL_CACHEDIR);
++			QDesktopServices::DataLocation) + "/" SL_CACHEDIR);
+ 	}
+ 
+ 	static QString libDir(void) {
+@@ -72,44 +72,44 @@
+ 	}
+ 
+ 	static QString resLangDir(void) {
+-		return ":/"SL_LANGDIR;
++		return ":/" SL_LANGDIR;
+ 	}
+ 
+ 	static QString sysLangDir(void) {
+-		return QDir::toNativeSeparators(QDir::currentPath() + "/"SL_LANGDIR);
++		return QDir::toNativeSeparators(QDir::currentPath() + "/" SL_LANGDIR);
+ 	}
+ 
+ 	static QString userLangDir(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DataLocation) + "/"SL_LANGDIR);
++			QDesktopServices::DataLocation) + "/" SL_LANGDIR);
+ 	}
+ 
+ 	static QString resThemeDir(void) {
+-		return ":/"SL_THEMEDIR;
++		return ":/" SL_THEMEDIR;
+ 	}
+ 
+ 	static QString sysThemeDir(void) {
+-		return QDir::toNativeSeparators(QDir::currentPath() + "/"SL_THEMEDIR);
++		return QDir::toNativeSeparators(QDir::currentPath() + "/" SL_THEMEDIR);
+ 	}
+ 
+ 	static QString userThemeDir(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DataLocation) + "/"SL_THEMEDIR);
++			QDesktopServices::DataLocation) + "/" SL_THEMEDIR);
+ 	}
+ 
+ 	static QString groupFile(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DataLocation) + "/"SL_GROUPFILE);
++			QDesktopServices::DataLocation) + "/" SL_GROUPFILE);
+ 	}
+ 
+ 	static QString avatarFile(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DataLocation) + "/"SL_AVATARFILE);
++			QDesktopServices::DataLocation) + "/" SL_AVATARFILE);
+ 	}
+ 
+ 	static QString logDir(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::DataLocation) + "/"SL_LOGDIR);
++			QDesktopServices::DataLocation) + "/" SL_LOGDIR);
+ 	}
+ 
+ 	static QString freeLogFile(void) {
+@@ -120,7 +120,7 @@
+ 
+ 	static QString tempConfigFile(void) {
+ 		return QDir::toNativeSeparators(QDesktopServices::storageLocation(
+-			QDesktopServices::TempLocation) + "/"SL_TEMPCONFIG);
++			QDesktopServices::TempLocation) + "/" SL_TEMPCONFIG);
+ 	}
+ };
+ 
+diff -urN ../orig/lmc/src/trace.cpp ./lmc/src/trace.cpp
+--- ../orig/lmc/src/trace.cpp	2012-05-15 10:54:28.000000000 -0300
++++ ./lmc/src/trace.cpp	2016-08-24 09:20:49.250332672 -0300
+@@ -38,7 +38,7 @@
+ 	fileName = pInitParams->data(XN_LOGFILE);
+ 
+ 	write("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"\
+-		  "         "IDA_TITLE" "IDA_VERSION" application log\n"\
++		  "         " IDA_TITLE " " IDA_VERSION " application log\n"\
+ 		  "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+ }
+ 
