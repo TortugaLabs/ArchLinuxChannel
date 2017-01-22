@@ -4,6 +4,8 @@
 dropbox
 google-chrome
 thunar-dropbox
+python2-pypdf2
+stapler
 
 #
 # These were planned for Centos chroots

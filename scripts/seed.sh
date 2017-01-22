@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # = SEEDER(8)
 # :Revision: 1.1
@@ -56,6 +56,19 @@ usage() {
 }
 #### stop common stuff ####
 
+x_opts=()
+while [ $# -gt 0 ] ; do
+  case "$1" in
+    --ignorerepo=*)
+      x_opts+=( "$1" )
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
+done
+
 [ $# -ne 2 ] && usage "$0"
 manifest="$1"
 srcdir="$2"
@@ -90,7 +103,7 @@ sed 's/#.*$//' "$manifest" | (
       rm -f "$srcdir/$ln/.t"
       continue
     fi
-    ( cd "$srcdir" && cower -d "$ln")
+    ( cd "$srcdir" && cower "${x_opts[@]}" -d "$ln")
   done
 )
 

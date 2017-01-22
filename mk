@@ -17,15 +17,51 @@
 # hardcoded because we are only using 64 bits...
 export CCW_ARCH=x86_64
 
-[ -z "$debug" ] && debug=:
+#### start common stuff ####
+version=$( grep '^# :Revision:' "$0" | cut -d: -f3 | tr -d ' ')
+set -euf -o pipefail
+die() {
+  ## Show a message and exit
+  ## # USAGE
+  ##   die exit_code [msg]
+  ## # ARGS
+  ## * exit_code -- Exit code
+  ## * msg -- Text to show on stderr
+  local exit_code="$1"
+  shift
+  echo "$@" 2>&1
+  exit $exit_code
+}
+debug() {
+  ## Will show a message if debug is non-empty
+  [ -z "${debug:=y}" ] && return
+  echo "$@"
+}
+manual() {
+  ## Show embedded (manify) documentation
+  sed -n -e '/^#++$/,$p' "$0" -e '/^#--$/q' "$1" | grep '^#' | sed -e 's/^# //' -e 's/^#//'
+  exit 0
+}
+usage() {
+  ## Show usage
+  echo 'Usage:'
+  sed -n -e '/^#++$/,$p' "$0" -e '/^#--$/q' "$1" | grep '^#' | \
+    sed -n -e '/^# == SYNOPSIS/,$p'  | ( read x ; cat ) | \
+    sed -e '/^# == /q' | sed 's/^# == .*//' | sed -e 's/^# *//' | \
+    (while read l ; do [ -n "$l" ] && echo '    '"$l" ; done) && :
+  [ -n "$version" ] && echo "$(basename "$0") v$version"
+  exit
+}
+#### stop common stuff ####
+
 
 world=$(cd "$(dirname "$0")" && pwd)
 [ -z "$world" ] && exit 1
-[ -z "$IN_ROOTER" ] && exec "$world/scripts/rooter.sh" "$0" "$@"
+[ -z "${IN_ROOTER:-}" ] && exec "$world/scripts/rooter.sh" "$0" "$@"
 scripts="$world/scripts"
 cd "$world" || exit 1
 
-[ -z "$name" ] && name="tlabs"
+[ -z "${name:-}" ] && name="tlabs"
 repo=$(readlink -f ..)/$name/x86_64
 mkdir -p "$repo"
 
@@ -47,17 +83,17 @@ if [ "$#" -eq 0 ] ; then
 fi
 
 init() {
-  $debug "! initializing sources"
-  $scripts/seed.sh manifest.txt source
+  debug "! initializing sources"
+  $scripts/seed.sh --ignorerepo="$name" manifest.txt source
 }
 
 update() {
-  $debug "! update from AUR"
+  debug "! update from AUR"
   ( cd source && $scripts/aurdl.sh --ignorerepo="$name" * )
 }
 
 build() {
-  $debug "! Building sources"
+  debug "! Building sources"
   (
     cd source || exit
     $scripts/ccw.sh depsort * | $scripts/builder.sh "$repo" "$name"
@@ -65,7 +101,7 @@ build() {
 }
 
 push() {
-  $debug "! Push to repo"
+  debug "! Push to repo"
   if [ -z "$repo" ] ; then
     echo "Specify repo with --repo= option"
     exit 1
@@ -74,8 +110,8 @@ push() {
     echo "Specify name with --name= option"
     exit 1
   fi
-  $debug "REPO PATH: $repo"
-  $debug "REPO NAME: $name"
+  debug "REPO PATH: $repo"
+  debug "REPO NAME: $name"
   $scripts/repoupd.sh $repo $name source/*
 }
 
