@@ -96,7 +96,9 @@ build() {
   debug "! Building sources"
   (
     cd source || exit
-    $scripts/ccw.sh depsort * | $scripts/builder.sh "$repo" "$name"
+    sources=$(find . -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
+    $scripts/ccw.sh depsort $sources | $scripts/builder.sh "$repo" "$name"
+    updscore
   )
 }
 
@@ -115,9 +117,20 @@ push() {
   $scripts/repoupd.sh $repo $name source/*
 }
 
+updscore() {
+  local \
+    wget="wget -O- -nv" \
+    url="http://ow1.localnet/cgi-bin/updstat.cgi?" \
+    n="&" \
+    app="host=ArchLinuxChannel" \
+    ver="version=$(date +%Y.%m)"
+
+  $wget "$url$app$n$ver"
+}
+
 world() {
   init
-  update
+  update || :
   build
   #push
 }
