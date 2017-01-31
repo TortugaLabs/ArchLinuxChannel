@@ -89,7 +89,8 @@ init() {
 
 update() {
   debug "! update from AUR"
-  ( cd source && $scripts/aurdl.sh --ignorerepo="$name" * )
+  srcs=$(find source -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
+  ( cd source && $scripts/aurdl.sh --ignorerepo="$name" $srcs )
 }
 
 build() {
