@@ -6,6 +6,7 @@ google-chrome
 thunar-dropbox
 python2-pypdf2
 stapler
+flpsed
 
 #
 # These were planned for Centos chroots
